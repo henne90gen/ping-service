@@ -1,0 +1,5 @@
+port: 3000
+frequency: 1s
+hosts:
+  - name: gpx-journal
+    url: https://gpx-journal.de
