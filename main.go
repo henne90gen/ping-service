@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"time"
@@ -73,6 +74,13 @@ func readConfig(path string) (Config, error) {
 		return config, err
 	}
 
+	for _, host := range config.Hosts {
+		_, err := url.ParseRequestURI(host.Url)
+		if err != nil {
+			log.Fatalf("Invalid URL: name=%s url=%s", host.Name, host.Url)
+		}
+	}
+
 	return config, nil
 }
 
@@ -91,6 +99,7 @@ func pingLoop(config Config) {
 			err := element.ping()
 			isUp := err == nil
 
+			log.Tracef("ping: name=%s url=%s isUp=%t err=%s", element.Name, element.Url, isUp, err)
 			if isUp {
 				hostUp.WithLabelValues(element.Name).Set(1.0)
 			} else {
