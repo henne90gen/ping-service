@@ -17,7 +17,7 @@ import (
 
 var (
 	hostUp = promauto.NewGaugeVec(prometheus.GaugeOpts{
-		Name: "ping_service_host_up",
+		Name: "pingz_host_up",
 		Help: "1 if the host is up, 0 otherwise",
 	}, []string{"host"},
 	)
