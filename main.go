@@ -77,7 +77,7 @@ func readConfig(path string) (Config, error) {
 	for _, host := range config.Hosts {
 		_, err := url.ParseRequestURI(host.Url)
 		if err != nil {
-			log.Fatalf("Invalid URL: name=%s url=%s", host.Name, host.Url)
+			log.Fatalf("Invalid URL: name=%s url=%s err=%s", host.Name, host.Url, err)
 		}
 	}
 
