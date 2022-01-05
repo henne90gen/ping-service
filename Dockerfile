@@ -9,7 +9,7 @@ FROM alpine:3.15.0
 RUN mkdir /app
 WORKDIR /app
 
-COPY --from=builder /app/ping-service /app/ping-service
+COPY --from=builder /app/pingz /app/pingz
 
-ENTRYPOINT [ "./ping-service" ]
+ENTRYPOINT [ "./pingz" ]
 EXPOSE 3000

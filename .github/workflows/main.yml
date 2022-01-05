@@ -20,7 +20,7 @@ jobs:
         run: docker login -u henne90gen -p $DOCKER_PASSWORD
 
       - name: Build
-        run: docker build . --tag henne90gen/ping-service:latest
+        run: docker build . --tag henne90gen/pingz:latest
 
       - name: Upload Docker Image
-        run: docker push henne90gen/ping-service -a
+        run: docker push henne90gen/pingz -a
