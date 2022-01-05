@@ -82,7 +82,7 @@ func pingLoop(config Config) {
 		log.Fatalf("Failed to parse frequency: %s", err)
 	}
 
-	log.Info("Starting ping loop at frequency=%s", config.Frequency)
+	log.Infof("Starting ping loop at frequency=%s", config.Frequency)
 
 	for {
 		start := time.Now()
