@@ -82,6 +82,8 @@ func pingLoop(config Config) {
 		log.Fatalf("Failed to parse frequency: %s", err)
 	}
 
+	log.Info("Starting ping loop at frequency=%s", config.Frequency)
+
 	for {
 		start := time.Now()
 
@@ -103,6 +105,7 @@ func pingLoop(config Config) {
 }
 
 func main() {
+	log.Info("Starting pingz...")
 	path := getopt.StringLong("config", 'c', "./config.yaml", "Path to config.yaml file")
 	help := getopt.BoolLong("help", 'h', "Help")
 	getopt.Parse()
@@ -117,6 +120,7 @@ func main() {
 		log.Fatalf("Failed to read config file: %s", err)
 	}
 
+	log.Infof("Read %s", *path)
 	log.Tracef("Using config: %+v", config)
 
 	go pingLoop(config)
