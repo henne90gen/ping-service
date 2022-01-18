@@ -24,19 +24,6 @@ var (
 	)
 )
 
-func (h *Host) ping() error {
-	resp, err := http.Get(h.Url)
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != 200 {
-		return errors.New("response code was not '200'")
-	}
-
-	return nil
-}
-
 type Host struct {
 	Name string `yaml:"name"`
 	Url  string `yaml:"url"`
@@ -46,14 +33,6 @@ type Config struct {
 	Port      int64  `yaml:"port"`
 	Frequency string `yaml:"frequency"`
 	Hosts     []Host `yaml:"hosts"`
-}
-
-type Hosts struct {
-	hosts map[string]Host
-}
-
-type HostStatus struct {
-	IsUp bool
 }
 
 func NewConfig() Config {
@@ -84,26 +63,39 @@ func readConfig(path string) (Config, error) {
 	return config, nil
 }
 
+func (h *Host) ping() error {
+	resp, err := http.Get(h.Url)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != 200 {
+		return errors.New("response code was not '200'")
+	}
+
+	return nil
+}
+
 func pingLoop(config Config) {
 	frequency, err := time.ParseDuration(config.Frequency)
 	if err != nil {
 		log.Fatalf("Failed to parse frequency: %s", err)
 	}
 
-	log.Infof("Starting ping loop at frequency=%s", config.Frequency)
+	log.Infof("Pinging every %s", config.Frequency)
 
 	for {
 		start := time.Now()
 
-		for _, element := range config.Hosts {
-			err := element.ping()
+		for _, host := range config.Hosts {
+			err := host.ping()
 			isUp := err == nil
 
-			log.Tracef("ping: name=%s url=%s isUp=%t err=%s", element.Name, element.Url, isUp, err)
 			if isUp {
-				hostUp.WithLabelValues(element.Name).Set(1.0)
+				hostUp.WithLabelValues(host.Name).Set(1.0)
 			} else {
-				hostUp.WithLabelValues(element.Name).Set(0.0)
+				hostUp.WithLabelValues(host.Name).Set(0.0)
+				log.Warnf("ping: name=%s url=%s isUp=%t err=%s", host.Name, host.Url, isUp, err)
 			}
 		}
 
@@ -136,5 +128,5 @@ func main() {
 
 	log.Infof("Listening on 0.0.0.0:%d", config.Port)
 	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":"+strconv.FormatInt(config.Port, 10), nil)
+	log.Fatal(http.ListenAndServe(":"+strconv.FormatInt(config.Port, 10), nil))
 }
