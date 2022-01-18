@@ -121,8 +121,8 @@ func main() {
 		log.Fatalf("Failed to read config file: %s", err)
 	}
 
-	log.Infof("Read %s", *path)
-	log.Tracef("Using config: %+v", config)
+	log.Infof("Read config at path '%s'", *path)
+	log.Infof("%+v", config)
 
 	go pingLoop(config)
 
